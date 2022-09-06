@@ -1,14 +1,17 @@
 import React from "react";
 import axios from "axios";
-import Carousel from "react-bootstrap/Carousel";
-import { CarouselItem } from "react-bootstrap";
-import { Card,Button } from "react-bootstrap";
+// import Carousel from "react-bootstrap/Carousel";
+// import { CarouselItem } from "react-bootstrap";
+import { Card, Button } from "react-bootstrap";
+import UpdateForm from "./UpdateForm";
 
 class BestBooks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       books: [],
+      showFlags: false,
+      currentBooks: {}
     };
   }
   /* TODO: Make a GET request to your API to fetch all the books from the database  */
@@ -55,6 +58,39 @@ class BestBooks extends React.Component {
       })
       .catch((err) => {
         console.log(err);
+      })
+  }
+
+  openForm = (item) => {
+    this.setState({
+      showFlags: true,
+      currentBooks: item,
+    })
+  }
+  handleClose = () => {
+    this.setState({
+      showFlags: false
+    })
+  }
+
+  updateBooks = (event) => {
+    event.preventDefault();
+    let obj = {
+      // bookTitle: event.target.bookTitle.value,
+      // bookDiscreption: event.target.bookDiscreption.value,
+      // bookStatus: event.target.bookStatus.value,
+    };
+    const id = this.state.currentBooks._id;
+    axios
+      .put(`http://localhost:3001/updateBooks/${id}`, obj)
+      .then((result) => {
+        this.setState({
+          books: result.data,
+        });
+        this.handleClose();
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
 
@@ -73,18 +109,24 @@ class BestBooks extends React.Component {
         </form> */}
 
         <Card className="text-center">
-      <Card.Header>Add books</Card.Header>
-      <Card.Body>
-        <Card.Title>Here you cam add any books you need!</Card.Title>
-        <form onSubmit={this.addBooks}>
-        <input type="text" name="bookTitle" placeholder="Book name" />
-          <input type="text" name="bookDiscreption" placeholder="Book name" />
-          <input type="text" name="bookStatus" placeholder="Book name" />
-          <Button type="submit">Add books</Button>
-          </form>
-      </Card.Body>
-      <Card.Footer className="text-muted">Thank you for adding your favorite book</Card.Footer>
-    </Card>
+          <Card.Header>Add books</Card.Header>
+          <Card.Body>
+            <Card.Title>Here you cam add any books you need!</Card.Title>
+            <form onSubmit={this.addBooks}>
+              <input type="text" name="bookTitle" placeholder="Book title" />
+              <input
+                type="text"
+                name="bookDiscreption"
+                placeholder="Book discreption"
+              />
+              <input type="text" name="bookStatus" placeholder="Book status" />
+              <Button type="submit">Add books</Button>
+            </form>
+          </Card.Body>
+          <Card.Footer className="text-muted">
+            Thank you for adding your favorite book
+          </Card.Footer>
+        </Card>
 
         {this.state.books.map((item) => {
           return (
@@ -93,6 +135,7 @@ class BestBooks extends React.Component {
               <p>description : {item.discreption}</p>
               <p>status : {item.status}</p>
               <button onClick={() => this.deleteBooks(item._id)}>Delete</button>
+              <button onClick={() => this.openForm(item)}>Update</button>
             </div>
 
             // <Carousel>
@@ -111,6 +154,12 @@ class BestBooks extends React.Component {
             // </Carousel>
           );
         })}
+        <UpdateForm
+          show={this.state.showFlags}
+          handleClose={this.handleClose}
+          updateBooks={this.updateBooks}
+          currentBooks={this.state.currentBooks}
+        />
       </div>
     );
   }
