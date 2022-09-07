@@ -32,9 +32,9 @@ class BestBooks extends React.Component {
   addBooks = (event) => {
     event.preventDefault();
     const obj = {
-      bookTitle: event.target.bookTitle.value,
-      bookDiscreption: event.target.bookDiscreption.value,
-      bookStatus: event.target.bookStatus.value,
+      // bookTitle: event.target.bookTitle.value,
+      // bookDiscreption: event.target.bookDiscreption.value,
+      // bookStatus: event.target.bookStatus.value,
     };
     axios
       .post(`http://localhost:3001/addBooks`, obj)
@@ -76,9 +76,9 @@ class BestBooks extends React.Component {
   updateBooks = (event) => {
     event.preventDefault();
     let obj = {
-      // bookTitle: event.target.bookTitle.value,
-      // bookDiscreption: event.target.bookDiscreption.value,
-      // bookStatus: event.target.bookStatus.value,
+      title: event.target.bookTitle.value,
+      discreption: event.target.bookDiscreption.value,
+      status: event.target.bookStatus.value,
     };
     const id = this.state.currentBooks._id;
     axios
